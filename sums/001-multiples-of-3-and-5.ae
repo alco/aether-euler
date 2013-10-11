@@ -6,3 +6,43 @@
 //
 // Find the sum of all the multiples of 3 or 5 below 1000.
 //
+
+//
+// There are multiple ways to solve this:
+//
+// ## 1. Two streams
+//
+// Generate two streams of numbers: <3,6,9,...> and <5,10,15,...> and calculate
+// the sum of each in parallel. Some values may appear in both streams, though.
+// We can set up a filter on one of the streams, e.g. remove all numbers from
+// the first stream that are divisible by 5. The second stream needs not be
+// touched then.
+//
+// Another solution to the duplication problem would be to generate numbers for
+// one of the streams in batches, e.g. <3,6,9,12>, <18,21,24,27>, etc., thus
+// avoiding numbers that are also multiples of 5.
+//
+//
+// ## 2. One stream with a filter
+//
+// Generate a stream of natural numbers and try dividing each one by 3 and 5.
+//
+//
+// ## 3. Alternating increment
+//
+//         3,  5,  6,  9, 10, 12, 15, 18, 20, 21, 24, 25, 27, 30, 33, 35, 36
+//            +2  +3  +3  +1  +3  +3  +3  +2  +3  +3  +1  +3  +3  +3  +2  +3
+//            +2  +1  +3  +1  +2  +3  +3  +2  +1  +3  +1  +2  +3  +3  +2  +1
+//
+
+// solution #1
+fn two_streams(N) (
+    var three = seq(3,6..) => filter(fn &1 mod 5 ≠ 0)
+    var five = seq(5,10..)
+    merge(three, five) => take_while(fn &1 < N) => sum
+)
+
+// solution #2
+fn one_stream(N) (
+    seq(3,4..) => filter(〖&1 mod 3 == 0 or &1 mod 5 == 0〗) => sum
+)
