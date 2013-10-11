@@ -9,3 +9,35 @@
 // By considering the terms in the Fibonacci sequence whose values do not
 // exceed four million, find the sum of the even-valued terms.
 //
+
+// TODO:
+// Required primitives:
+// * tuple
+// * fn
+// * loop
+// * filter
+// * take_while
+// * fold with a binop
+
+// Generates an infinite stream of Fibonacci numbers
+fn fibs() {
+    {1, 2} => loop fn (emit &1; {&2, &1+&2})
+}
+
+fn sum_fibs(max_num) {
+    fibs()
+    => take_while(fn &1 ≤ max_num)
+    => filter(fn &1 mod 2 == 0)
+    => '+
+
+    // equivalent sequential code
+    // var a, b = 1, 2
+    // var sum = 0
+    // while a ≤ max_num {
+    //     if a mod 2 == 0 {
+    //         sum += a
+    //     }
+    //     a, b = b, a+b
+    // }
+}
+
