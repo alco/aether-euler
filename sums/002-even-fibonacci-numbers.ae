@@ -19,12 +19,42 @@
 // * take_while
 // * fold with a binop
 
-// Generates an infinite stream of Fibonacci numbers
-fn fibs() {
-    {1, 2} => loop fn (emit &1; {&2, &1+&2})
-}
+// Generate an infinite stream of Fibonacci numbers
+// Clojure: (def fibs (lazy-cat [0 1] (map + fibs (rest fibs))))
+fn fibseq() (
+    concat([0 1], { fibseq(), rest(fibseq()) } -> plus)
+)
 
-fn sum_fibs(max_num) {
+fn fibs() (
+    {1, 2} => loop fn (emit &1; {&2, &1+&2})
+)
+
+fn fibs_map() (
+    {1, 2} => iterate fn({a,b}) {b, a+b} -> fn {a,_} a
+)
+
+fn fibs_for() (
+    var a = 1, b = 2
+    for (
+        yield a
+        a, b = b, a+b
+    )
+)
+
+fn fibs_tail(a=1, b=2) (
+    yield a
+    goto fibs_tail(b, a+b)
+)
+
+fn fibs_tail2() (
+    var ft = fn(a, b) (
+        yield a
+        recur(b, a+b)
+    )
+    ft(0, 1)
+)
+
+fn sum_fibs(max_num) (
     fibs()
     => take_while(fn &1 ≤ max_num)
     => filter(fn &1 mod 2 == 0)
@@ -39,5 +69,5 @@ fn sum_fibs(max_num) {
     //     }
     //     a, b = b, a+b
     // }
-}
+)
 
