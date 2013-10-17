@@ -47,21 +47,28 @@
 // S = Σ(3n) + Σ(5n) - Σ(15n) = 3/2*n3*(n3 + 1) + 5/2*n5*(n5+1) - 15/2*n15*(n15+1)
 //     n=1     n=1     n=1
 //
+//
+// ## 5. Do more work
+//
+// Create three streams: multiples of 3 (A), multiples of 5 (B), and multiples
+// of 15 (C).
+//
+//         S = sum(A) + sum(B) - sum(C)
+//
 
 // TODO:
 // Implement primitives:
 // * fn
+// * def
 // * filter
-// * seq(1,2..N)
-// * seqn(1,2..n)
 // * seq(1,2..)  -- infinite stream
-// * fold with a binop
+// * fold with a binop ( => '+ )
 // * merge(stream stream)
 
-// solution #1
-fn two_streams(N) (
-    var three = seq(3,6..N) => filter(fn &1 mod 5 ≠ 0)
-    var five = seq(5,10..N)
+// solution #1a
+def two_streams(N) (
+    var three = seq(3,6..N)
+    var five = seq(5,10..N) => filter(fn &1 mod 3 ≠ 0)
     merge(three, five) => '+
 
     // merge does not preserve order, summing can be parallelized
@@ -78,8 +85,15 @@ fn two_streams(N) (
     // }
 )
 
+// solution #1b
+def two_streams_sum(N) (
+    var three = seq(3,6..N)
+    var five = seq(5,10..N) => filter(fn &1 mod 3 ≠ 0)
+    sum(three) + sum(five)
+)
+
 // solution #2
-fn one_stream(N) (
+def one_stream(N) (
     seq(3,4..N) => filter(〖&1 mod 3 == 0 or &1 mod 5 == 0〗) => '+
 
     // summing can be parallelized because + is associative and commutative
@@ -91,4 +105,20 @@ fn one_stream(N) (
     //        sum += i
     //    }
     // }
+)
+
+// solution #5a
+def three_streams(N) (
+    var three   = seq(3,6..N)
+    var five    = seq(5,10..N)
+    var fifteen = seq(15,30..N)
+    sum(three) + sum(five) - sum(fifteen)
+)
+
+// solution #5b
+def three_streams_alt(N) (
+    var three   = seq(3,6..N)
+    var five    = seq(5,10..N)
+    var fifteen = seq(-15,-30..-N)
+    merge(three, five, fifteen) => '+
 )
