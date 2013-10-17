@@ -1,0 +1,11 @@
+// An infinite stream of primes
+fn primes() {
+    // naive implementation of the sieve of Eratosthenes
+    seq(2,3..) => filter(fn(n, primes) (
+        if find(primes, fn n mod &1 == 0) (
+            false, primes
+        ) else (
+            true, primes ++ [n]
+        )
+    ))
+}

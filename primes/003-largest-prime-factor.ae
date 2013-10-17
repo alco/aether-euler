@@ -5,3 +5,20 @@
 //
 // What is the largest prime factor of the number 600851475143 ?
 //
+
+import "./common"
+
+fn largest_prime(N) (
+    primes()
+    => take_while(fn &1 <= sqrt(N))
+    => fn(p, maxprime=-1) (
+        if N mod p == 0 (
+            p
+        ) else (
+            maxprime
+        )
+    )
+)
+
+// Imperative solution
+...
