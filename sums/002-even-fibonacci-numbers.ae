@@ -10,6 +10,19 @@
 // exceed four million, find the sum of the even-valued terms.
 //
 
+// N is the inclusive upper bound on the sequence number value
+def sum_even_fibs(N) (
+  let fibs = [0, 1 .. fibs[ɩ-2] + fibs[ɩ-1]]
+  let even? = 〖➀ mod 2 == 0〗
+
+  fibs()
+  -> take_while(fn ➀ ≤ N)
+  -> filter(even?)
+  -> fold('+)
+)
+
+// -----------------------
+
 // TODO:
 // Required primitives:
 // * tuple
@@ -19,39 +32,56 @@
 // * take_while
 // * fold with a binop
 
-// Generate an infinite stream of Fibonacci numbers
-// Clojure: (def fibs (lazy-cat [0 1] (map + fibs (rest fibs))))
-fn fibseq() (
-    concat([0 1], { fibseq(), rest(fibseq()) } -> plus)
-)
+// ---------------------
 
-fn fibs() (
-    {1, 2} => loop fn (emit &1; {&2, &1+&2})
-)
-
-fn fibs_map() (
-    {1, 2} => iterate fn({a,b}) {b, a+b} -> fn {a,_} a
+fn fibs_tail() (
+  let fib = fn(a, b) (
+    yield a
+    goto fib(b, a+b)
+  )
+  fib(0, 1)
 )
 
 fn fibs_for() (
-    var a = 1, b = 2
-    for (
-        yield a
-        a, b = b, a+b
-    )
-)
-
-fn fibs_tail(a=1, b=2) (
+  var a = 0, b = 1
+  loop (
     yield a
-    goto fibs_tail(b, a+b)
+    {a, b} = {b, a+b}
+  )
 )
 
-fn fibs_tail2() (
-    var ft = fn(a, b) (
-        yield a
-        recur(b, a+b)
-    )
-    ft(0, 1)
+fn fibs() (
+    let xs = [0, 1 ... xs[i-2] + xs[i-1]]; xs
+    // var a = 0, b = 1
+    // for (
+    //   yield a
+    //   var t = a
+    //   a = b
+    //   b = b + t
+    // )
+)
+
+fn facts() (
+    let xs = [1 ... i * xs[i-1]]; xs
+    // var x = 1
+    // for var i in seq(1..) (
+    //   yield x
+    //   x = x * i
+    // )
+)
+
+fn seq(from, step) (
+    let s = [from ... s[i-1] + step]; s
+)
+
+fn seq(from, step, to) when step ≠ 0 (
+    let s = [from ... s[i-1] + step]
+    s -> take_while(fn(x) step > 0 and x < to or x > to)
+)
+
+fn seq(from, step, count) (
+    let s = [from ... s[i-1] + step]
+    s -> take(count)
 )
 
 fn sum_fibs(max_num) (
