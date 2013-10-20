@@ -9,3 +9,35 @@ fn primes() {
         )
     ))
 }
+
+fn eratosthenes() (
+    var primes = []
+    for var n in seq(2,3..) (
+        if primes => all?(fn(p) n mod p ≠ 0) (
+            yield n
+            primes = append(primes, n)
+        )
+    )
+)
+
+fn iter() (
+    iterate({2, []}, fn(n, primes) (
+        {n+1, if all?(primes, fn(p) n mod p ≠ 0) (
+            append(primes, n)
+        ) else (
+            primes
+        )}
+    ))
+)
+
+
+fn* primes_tail(n=2, primes=[]) (
+    goto primes_tail(n+1,
+        if all?(primes, fn(p) n mod p ≠ 0) (
+            yield n
+            append(primes, n)
+        ) else (
+            primes
+        )
+    )
+)
