@@ -47,6 +47,34 @@ def factorize1(i) (
   factors
 )
 
+// def factorize(_, _, 1, factors) do
+//   factors
+// end
+//
+// def factorize(p, next, x, factors) when mod(x, p) == 0 do
+//   factorize(p, next, x/p, update(factors, p, &(&1 + 1)))
+// end
+//
+// def factorize(p, next, x, factors) do
+//   { p, next } = next.()
+//   factorize(p, next, x, factors)
+// end
+
+def factorize1_elixir(i) (
+  let fact = fn (
+    (primes, i, factors)
+      fact(primes.first(), primes.rest(), i, factors)
+    (_, _, 1, factors)
+      factors
+    (p, primes, x, factors) when x mod p == 0
+      fact(primes, x/p, update(factors, p, (+1)))
+    (_, primes, x, factors)
+      fact(primes.first(), primes.rest(), x, factors)
+  )
+
+  fact(primes(), i, {})
+)
+
 def min_divisible_by1(n) (
   seq(n)
   |> fn(i, factors // {}) merge(factorize1(i), factors, max)
