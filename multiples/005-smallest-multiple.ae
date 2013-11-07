@@ -47,6 +47,19 @@ def factorize1(i) (
   factors
 )
 
+def factorize1b(i) (
+  var factors = defaultdict(0)
+  var primes = primes()
+  while i > 1 (
+    let p = primes.next()
+    while i mod p == 0 (
+      i = i / p
+      factors[p]++
+    )
+  )
+  factors
+)
+
 // def factorize(_, _, 1, factors) do
 //   factors
 // end

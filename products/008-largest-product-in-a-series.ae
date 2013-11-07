@@ -25,3 +25,49 @@
 //         05886116467109405077541002256983155200055935729725
 //         71636269561882670428252483600823257530420752963450
 //
+
+
+read_string().replace(:whitespace, "") -> fn(byte) byte - '0'
+
+seq(len(array)-5) => fn(i, max_prod // 0) (
+  max(max_prod, array[i:i+5] => '*)
+)
+
+
+// sliding window solution
+var prod = array[:5] => '*
+var max_prod = prod
+for i in seq(len(array)-5) (
+  prod = prod / array[i] * array[i+5];
+  max_prod = max(max_prod, prod)
+)
+
+
+// paired stream solution
+let f = fn((l, r), {prod, max_prod}) (
+  let prod = prod / l * r
+  {prod, max(max_prod, prod)}
+)
+let prod = array[:5] => '*
+{_, result} = (array[:-5], array[5:]) -> {f, {prod, prod}}
+result
+
+
+// paired stream solution with a wrapper
+let prod = array[:5] => '*
+(array[:-5], array[5:])
+-> maximize(prod, fn((l, r), prod) prod / l * r)
+
+let maximize = fn(initial, f) (
+  {fn(x, {val,maxval}) (
+     let newval = f(x, val)
+     {newval, max(newval, maxval)}
+   ),
+   {initial,initial}}
+)
+
+
+//def scan_prod(array, {i, prod, max_prod}) (
+//  prod = prod / array[i] * array[i+5]
+//  {i+1, prod, max(max_prod, prod)}
+//)
