@@ -7,3 +7,95 @@
 // What is the smallest positive number that is evenly divisible by all of the
 // numbers from 1 to 20?
 //
+
+//
+// If we keep a mapping from prime factors to the number of times each one is
+// used in the number we're looking for, we can then obtain the resulting
+// number by multiplying together all the prime factors specified number of
+// times.
+//
+// For example, for numbers from 1 to 10, we get the following procedure:
+//
+//     * ignore 1
+//     * factorize  2: [2];            { 2: 1 }                      +2
+//     * factorize  3: [3];            { 2: 1, 3: 1 }                +3
+//     * factorize  4: [2, 2];         { 2: 2, 3: 1 }                +2
+//     * factorize  5: [5];            { 2: 2, 3: 1, 5: 1 }          +5
+//     * factorize  6: [2, 3];         { 2: 2, 3: 1, 5: 1 }          --
+//     * factorize  7: [7];            { 2: 2, 3: 1, 5: 1, 7: 1 }    +7
+//     * factorize  8: [2, 2, 2];      { 2: 3, 3: 1, 5: 1, 7: 1 }    +2
+//     * factorize  9: [3, 3];         { 2: 3, 3: 2, 5: 1, 7: 1 }    +3
+//     * factorize 10: [2, 5];         { 2: 3, 3: 2, 5: 1, 7: 1 }    --
+//
+// Our target number is the product of all the primes in the dict raised to
+// their corresponding power:
+//
+//     n = 1 * 2³ * 3² * 5 * 7 = 2520
+//
+
+
+def factorize1(i) (
+  var x = i
+  var factors = defaultdict(0)
+  for p in primes() (
+    while x mod p == 0 (
+      x = x / p
+      factors[p]++
+    )
+    if x == 1 break
+  )
+  factors
+)
+
+def min_divisible_by1(n) (
+  seq(n)
+  |> fn(i, factors // {}) merge(factorize1(i), factors, max)
+  |> fn({p, count}, prod) prod * p**count
+)
+
+// store products instead of counts
+def factorize2(i) (
+  var x = i
+  var factors = defaultdict(1)
+  for p in primes() (
+    while x mod p == 0 (
+      x = x / p
+      factors[p] = factors[p] * p
+      // update(factors, p, (*p))
+    )
+    if x == 1 break
+  )
+  factors
+)
+
+def min_divisible_by2(n) (
+  seq(n)
+  |> fn(i, factors // {})
+      merge(factorize2(i), factors, max)
+  |> '*
+)
+
+
+
+
+//    let primes = primes()
+//    var factors = {}
+//    while (i > 1) (
+//      var rem
+//      do rem = i mod primes.next() while rem ≠ 0
+//      factors[rem]++
+//      // update(factors, rem, 〖➀ +1〗)
+//      // update(factors, rem, '+(➀, 1))
+//      // update(factors, rem, (+1))
+//    )
+
+
+def factorize1_tail(i) (
+  primes() -> fn(p, {x, factors} // {i, {}}) (
+    if x == 1 return factors
+    fold {x, factors} while x mod p == 0 -> {x, factors} (
+      {x / p, factors[p]++}
+    )
+  )
+)
+
