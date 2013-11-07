@@ -15,10 +15,16 @@ def sum_even_fibs(N) (
   let fibs = [0, 1 .. fibs[ɩ-2] + fibs[ɩ-1]]
   let even? = 〖➀ mod 2 == 0〗
 
-  fibs()
-  -> take_while(fn ➀ ≤ N)
-  -> filter(even?)
-  -> fold('+)
+  fibs -> take_while(fn(n) n ≤ N) -> filter(odd?) -> fold('*)
+  //
+  var sum = 1
+  for f in file.read("numbers").parse_numbers() (
+    if (f > N) break
+    if odd?(f) (
+      sum = sum * f
+    )
+  )
+  return sum
 )
 
 // -----------------------
